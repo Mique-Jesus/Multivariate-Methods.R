@@ -1,182 +1,28 @@
-# Principal_Component_Analysis.R
+# Principal Component Analysis
 
-#################################################
-#                    EJERCICIO 1
-#################################################
+***Applying Principal Component Analysis in R***
 
-#carga de datos##
-data1<-read.table(file.choose(),header=T)
-data<-as.matrix(data1)
-data
-
-#media, matriz de var/cov  y de correlaciones ##
-m<-colSums(data)/48 #obtengo un vector de medias
-m
-matriz_centrada<-t(t(data)-m) #Obtengo la matriz centrada a partir de la resta de los valores cada variable con su respectiva media
-
-s<-cov(matriz_centrada) #Realiza matriz de varianzas y covarianzas (también podría hacerse directamente sobre data, las varianzas y cov son las mismas que en la matriz centrada)
-s
-r<-cor(matriz_centrada)
-r
-
-##
-##Calculo de componentes principales "a mano"##
-e<-eigen(s) #cálculo de autovalores y autovectores
-e
-lambda<-e$value #Agarro solo los autovalores
-autov<-e$vectors #Agarro solo los autovectores
-
-#Propiedades
-totalvar<-sum(lambda) #la suma de los autovalores deber ser igual a...
-totalvar2<-sum(diag(s)) #...la suma de las varianzas de las variables 
-
-#Decido con cuántas componentes quedarme
-varcomp1<-lambda[1]/totalvar #se calcula el porcentaje de varianza/información retenida por el componente 1
-varcomp2<-lambda[2]/totalvar #y así sucesivamente para cada componente
-
-##Calculo scores para los n casos de los componentes
-scores<-t(t(autov) %*% t(matriz_centrada)) #multiplico los autovectores transpuestos por la matriz centrada transpuesta, luego transpongo esos resultados para obtener los scores
-scores[,1:4] #selecciono las puntuaciones de los componentes que he elegido, que en este caso son 4
+Principal Component Analysis (PCA) is a powerful technique used in data analysis to reduce the dimensionality of a dataset while retaining most of the important information. In R, PCA can be performed using the built-in `prcomp()` function.
 
 
-###############################################
-###############################################
-##Caculo componentes principales con comandos##
-sol_pca<-princomp(x=data,cor = FALSE) #cor indica si se correrá el análisis sobre la matriz de correlaciones o sobre la de varianzas y covarianzas
+Here are the steps to apply PCA in R:
 
-sol_pca$sdev^2 #muestra los autovalores "aproximados" (cantidad de información/varianza original que ha captado de manera general cada componente) *por una cuestión de redondeo, los autovalores calculados con este método no son exactos
-summary(sol_pca) #muestra las desviaciones estándar (raiz cuadrada de los autovalores/varianzas), los porcentajes y porcentajes acumulados de información/varianza original que ha captado cada componente
+Step 1: Load the data
+Load the dataset you want to analyze into R. It's important to ensure that the data is in a format that can be read by R, such as a CSV or Excel file.
 
-sol_pca$loading #autovectores (cargas de información de las variables originales que posee cada componente)
-sol_pca$loading[,1] #puedo seleccionar las cargas del 1er componente si deseo
-sol_pca$loading[,2] #puedo seleccionar las cargas del 2do componente si deseo
+Step 2: Subset the data
+Subset the data to include only the variables you want to analyze. PCA works best with continuous variables, so it's important to exclude any categorical variables or variables with missing data.
 
+Step 3: Standardize the data
+Standardize the data so that all the variables have the same scale. This is important because PCA is a variance-based technique, and variables with larger variances will dominate the analysis.
 
-##graficos
-plot(sol_pca,type="l",ylim=c(0,70)) #gráfica de los autovalores (gráfico codo), ayuda a determinar el número de componentes a elegir
+Step 4: Perform PCA
+Perform PCA using the `prcomp()` function in R. This function takes the standardized data as input and returns an object of class "prcomp" containing the principal components.
 
-library(factoextra)
-library(corrplot)
-eig.val<-get_eigenvalue(sol_pca)
-eig.val
-fviz_eig(sol_pca,addlabels=TRUE,ylim=c(0,100)) #gráfica de los autovalores expresados en porcentaje
+Step 5: Interpret the results
+Interpret the results of the PCA to understand the underlying structure of the data. The `summary()` function can be used to view the proportion of variance explained by each principal component, and the loadings of each variable on each principal component.
 
-var<-get_pca_var(sol_pca)
-var$cor
-corrplot(var$contrib,is.corr=FALSE) #gráfica de los autovectores
-fviz_contrib(sol_pca,choice="var",axes=1,top=10,ylim=c(0,30)) #gráfica del autovector/cargas del 1er componente
-fviz_contrib(sol_pca,choice="var",axes=2,top=10,ylim=c(0,100)) #gráfica del autovector/cargas del 2do componente
+Step 6: Visualize the results
+Visualize the results of the PCA to gain insight into the data. The `biplot()` function can be used to create a biplot of the principal components, showing the relationships between the variables and the principal components.
 
-library(FactoMineR)
-sol<-PCA(data,graph=FALSE)
-plot.PCA(sol,choix="var") #gráfica de correlaciones
-fviz_pca_var(sol,col.var="contrib",gradient.cols=c("blue","yellow","red"))
-
-plot.PCA(sol,choix="ind") #gráfica de posicionamiento de individuos en las dos primeras dimensiones
-
-
-##calculo puntuaciones (scores)
-sol_pca$scores
-sol_pca$scores[,1:4] #selecciono las puntuaciones de los componentes que he elegido, que en este caso son 4
-
-
-
-
-
-#####################################################################
-#                        EJERCICIO 2
-#####################################################################
-
-#carga de datos##
-data2<-read.table(file.choose(),header=T)
-data<-as.matrix(data2)
-data
-
-
-s<-cov(data)
-s
-
-#transformacion""
-data22<-log(data)
-
-s2<-cov(data22)
-s2
-r2<-cor(data22)
-r2
-
-boxplot(data)
-boxplot(data22)
-
-
-#PCA##
-
-invest_pca<-princomp(data22,cor=TRUE,score=TRUE)
-summary(invest_pca)
-
-#numero de componentes##
-plot(invest_pca,type="l")
-
-var<-invest_pca$sdev^2
-var
-regla2<-mean(var)
-regla2
-
-#tama?o y forma##
-invest_pca$loading
-
-#factoextra##
-library(factoextra)
-library(corrplot)
-
-eig.val<-get_eigenvalue(invest_pca)
-eig.val
-
-fviz_eig(invest_pca,addlabels=TRUE,ylim=c(0,100))
-
-#vizualiacion de contribucion de cada variable##
-var<-get_pca_var(invest_pca)
-var$cor
-corrplot(var$contrib,is.corr=FALSE)
-
-fviz_contrib(invest_pca,choice="var",axes=1,top=10,ylim=c(0,30))
-fviz_contrib(invest_pca,choice="var",axes=2,top=10,ylim=c(0,100))
-
-##individuos""
-library(FactoMineR)
-pca<-PCA(data22,graph=FALSE)
-plot.PCA(pca,choix="ind")
-
-
-#####################################################################
-#                        EJERCICIO 3
-#####################################################################
-data2<-read.table(file.choose(),header=T)
-data<-as.matrix(data2)
-data
-summary(data)
-
-cor(data)
-
-jugo_pca<-princomp(data,score=TRUE)
-summary(jugo_pca)
-
-jugo_pca$loading
-
-
-library(factoextra)
-library(FactoMineR)
-
-jug<-PCA(data,graph=FALSE)
-
-jug$eig
-plot(jugo_pca,type="l")
-
-jug$var
-
-plot.PCA(jug,choix="var")
-fviz_pca_var(jug,col.var="contrib",gradient.cols=c("blue","yellow","red"))
-##nota pra prox cuatri = calcular a mano las contribuciones""
-
-plot.PCA(jug,choix="ind")
-
-##################################
+In summary, performing PCA in R involves loading the data, subsetting the variables, standardizing the data, performing PCA using `prcomp()`, interpreting the results using `summary()`, and visualizing the results using `biplot()`. By following these steps, you can use PCA to uncover the underlying structure of your data and gain valuable insights into complex datasets.
