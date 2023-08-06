@@ -6,24 +6,84 @@ Principal Component Analysis (PCA) is a powerful technique used in data analysis
 
 <img src="https://media.licdn.com/dms/image/D4D12AQF61SUXClGqIg/article-cover_image-shrink_720_1280/0/1660108512262?e=2147483647&v=beta&t=2mC01TbYrQJMHx9HYFgcfbg7cr44grRjFGr8TKMPmSI" width="500">
 
-Here are the steps to apply PCA in R:
 
-***Step 1:*** Load the data
-Load the dataset you want to analyze into R. It's important to ensure that the data is in a format that can be read by R, such as a CSV or Excel file.
 
-***Step 2:*** Subset the data
-Subset the data to include only the variables you want to analyze. PCA works best with continuous variables, so it's important to exclude any categorical variables or variables with missing data.
+Here is a step-by-step guide to applying PCA in R:
 
-***Step 3:*** Standardize the data
-Standardize the data so that all the variables have the same scale. This is important because PCA is a variance-based technique, and variables with larger variances will dominate the analysis.
+**Step 1: Load the Required Packages**
 
-***Step 4:*** Perform PCA
-Perform PCA using the `prcomp()` function in R. This function takes the standardized data as input and returns an object of class "prcomp" containing the principal components.
+Start by opening R or RStudio and loading the necessary packages:
 
-***Step 5:*** Interpret the results
-Interpret the results of the PCA to understand the underlying structure of the data. The `summary()` function can be used to view the proportion of variance explained by each principal component, and the loadings of each variable on each principal component.
+```r
+library(stats)      # For prcomp() function
+library(ggplot2)    # For visualization
+```
 
-***Step 6:*** Visualize the results
-Visualize the results of the PCA to gain insight into the data. The `biplot()` function can be used to create a biplot of the principal components, showing the relationships between the variables and the principal components.
+**Step 2: Load and Explore the Dataset**
 
-In summary, performing PCA in R involves loading the data, subsetting the variables, standardizing the data, performing PCA using `prcomp()`, interpreting the results using `summary()`, and visualizing the results using `biplot()`. By following these steps, you can use PCA to uncover the underlying structure of your data and gain valuable insights into complex datasets. Now, in this Notebook, we present three applied examples with their script in R to gain an in-deep understanding of PCA.  
+The "USArrests" dataset is built into R. Load it and explore the first few rows:
+
+```r
+data("USArrests")
+head(USArrests)
+```
+
+**Step 3: Standardize the Data**
+
+PCA requires data standardization. Standardize the variables in the dataset:
+
+```r
+standardized_data <- scale(USArrests)
+```
+
+**Step 4: Perform PCA**
+
+Apply PCA to the standardized data using the `prcomp()` function:
+
+```r
+pca_result <- prcomp(standardized_data)
+```
+
+**Step 5: Exploring PCA Results**
+
+Let's explore the results of PCA:
+
+- To see the proportion of variance explained by each principal component:
+
+```r
+summary(pca_result)
+```
+
+This output provides the standard deviations of each principal component and the proportion of total variance explained.
+
+- To access the principal components themselves:
+
+```r
+pca_components <- pca_result$rotation
+```
+
+**Step 6: Visualize PCA Results**
+
+Visualize the results of PCA using a scree plot to understand the amount of variance explained by each principal component:
+
+```r
+scree_data <- data.frame(
+  PC = 1:length(pca_result$sdev),
+  VarianceExplained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+)
+
+ggplot(scree_data, aes(x = PC, y = VarianceExplained)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Scree Plot", x = "Principal Component", y = "Proportion of Variance Explained")
+```
+
+**Step 7: Interpretation of Results**
+
+- The `summary(pca_result)` output helps you understand the proportion of variance explained by each principal component. This informs you about which components capture the most variability in your data.
+
+- The `pca_components` matrix contains the loading scores for each variable on each principal component. Larger absolute values indicate stronger contributions to that component.
+
+- The scree plot provides an overview of how much variance is captured by each principal component. The "elbow point" suggests how many components to retain to explain a significant portion of the data's variability.
+
+
+In summary, Principal Component Analysis is a valuable technique for reducing the complexity of datasets and revealing hidden patterns. By following this step-by-step guide and applying PCA to the "USArrests" dataset, you've learned how to preprocess data, perform PCA, and interpret the results. This method can be extended to various public datasets, helping researchers and analysts uncover insights that might not be apparent in the original high-dimensional data. Now, in this Notebook, we present three more applied examples with their script in R to gain an in-deep understanding of PCA.  
