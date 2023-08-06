@@ -147,7 +147,7 @@ plot.PCA(pca,choix="ind")
 
 
 #####################################################################
-#                        EJEMPLO 3
+#                        EJERCICIO 3
 #####################################################################
 data2<-read.table(file.choose(),header=T)
 data<-as.matrix(data2)
