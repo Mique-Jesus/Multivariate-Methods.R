@@ -118,7 +118,7 @@ var
 regla2<-mean(var)
 regla2
 
-#tama?o y forma##
+#tamaño y forma##
 invest_pca$loading
 
 #factoextra##
@@ -178,5 +178,4 @@ fviz_pca_var(jug,col.var="contrib",gradient.cols=c("blue","yellow","red"))
 
 plot.PCA(jug,choix="ind")
 
-##################################
 
