@@ -1,20 +1,14 @@
-#################################################
-#UBA-FCE
-#Metodos de Analisis Multivariado
-#PRACTICA 1: COMPONENTES PRINCIPALES
-#Act Miguel Cordoba
-##
 
 #################################################
 #                    EJERCICIO 1
 #################################################
 
-#carga de datos##
+##Carga de datos##
 data1<-read.table(file.choose(),header=T)
 data<-as.matrix(data1)
 data
 
-#media, matriz de var/cov  y de correlaciones ##
+##Media, matriz de var/cov  y de correlaciones##
 m<-colSums(data)/48 #obtengo un vector de medias
 m
 matriz_centrada<-t(t(data)-m) #Obtengo la matriz centrada a partir de la resta de los valores cada variable con su respectiva media
@@ -24,7 +18,7 @@ s
 r<-cor(matriz_centrada)
 r
 
-##
+###############################################
 ##Calculo de componentes principales "a mano"##
 e<-eigen(s) #cálculo de autovalores y autovectores
 e
@@ -45,7 +39,6 @@ scores[,1:4] #selecciono las puntuaciones de los componentes que he elegido, que
 
 
 ###############################################
-###############################################
 ##Caculo componentes principales con comandos##
 sol_pca<-princomp(x=data,cor = FALSE) #cor indica si se correrá el análisis sobre la matriz de correlaciones o sobre la de varianzas y covarianzas
 
@@ -57,7 +50,7 @@ sol_pca$loading[,1] #puedo seleccionar las cargas del 1er componente si deseo
 sol_pca$loading[,2] #puedo seleccionar las cargas del 2do componente si deseo
 
 
-# graficos##
+##Graficos##
 plot(sol_pca,type="l",ylim=c(0,70)) #gráfica de los autovalores (gráfico codo), ayuda a determinar el número de componentes a elegir
 
 library(factoextra)
@@ -80,10 +73,9 @@ fviz_pca_var(sol,col.var="contrib",gradient.cols=c("blue","yellow","red"))
 plot.PCA(sol,choix="ind") #gráfica de posicionamiento de individuos en las dos primeras dimensiones
 
 
-# calculo puntuaciones (scores)##
+##Calculo puntuaciones (scores)##
 sol_pca$scores
 sol_pca$scores[,1:4] #selecciono las puntuaciones de los componentes que he elegido, que en este caso son 4
-
 
 
 
@@ -92,7 +84,7 @@ sol_pca$scores[,1:4] #selecciono las puntuaciones de los componentes que he eleg
 #                        EJERCICIO 2
 #####################################################################
 
-#carga de datos##
+##Carga de datos##
 data2<-read.table(file.choose(),header=T)
 data<-as.matrix(data2)
 data
@@ -113,7 +105,7 @@ boxplot(data)
 boxplot(data22)
 
 
-#PCA##
+##PCA##
 
 invest_pca<-princomp(data22,cor=TRUE,score=TRUE)
 summary(invest_pca)
@@ -150,6 +142,8 @@ fviz_contrib(invest_pca,choice="var",axes=2,top=10,ylim=c(0,100))
 library(FactoMineR)
 pca<-PCA(data22,graph=FALSE)
 plot.PCA(pca,choix="ind")
+
+
 
 
 #####################################################################
